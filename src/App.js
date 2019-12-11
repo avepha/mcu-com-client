@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Fragment, useState} from 'react'
+import {Col, Row} from 'reactstrap'
+import SelectPortInput from './components/SelectPortInput'
+import SerialInput from './components/SerialInput'
+import SerialOutput from './components/SerialOutput'
 
 function App() {
+  const [isPortOpen, setIsPortOpen] = useState(false)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Fragment>
+      <div className="ml-3 mr-3">
+        <SelectPortInput onStatusChange={(status) => setIsPortOpen(status)}/>
+        <Row>
+          <Col xs="6">
+            <SerialInput connection={isPortOpen}/>
+          </Col>
+          <Col xs="6">
+            <SerialOutput connection={isPortOpen}/>
+          </Col>
+        </Row>
+      </div>
+
+    </Fragment>
+  )
 }
 
-export default App;
+export default App

@@ -38,6 +38,7 @@ const SerialOutput = ({connection}) => {
         setText(`${text}${data}\r\n`)
       }
     }
+    // eslint-disable-next-line
   }, [res, autoClear])
 
   return (

@@ -3,6 +3,7 @@ import {Button, Form, FormGroup, Input, Label} from 'reactstrap'
 import useForm from 'react-hook-form'
 import isJson from '../helpers/isJson'
 import axios from 'axios'
+import config from '../config'
 
 const SerialInput = ({connection}) => {
   const {register, watch, setValue} = useForm()
@@ -12,22 +13,36 @@ const SerialInput = ({connection}) => {
     const str = watch('jsonText')
     if (isJson(str)) {
       setValue('jsonText', JSON.stringify(JSON.parse(str), null, 2))
-    }
-    else {
+    } else {
       setError('Json format is invalid')
     }
   }
 
   const onSubmit = async (e) => {
-    e.preventDefault()
+    if (e) {
+      e.preventDefault()
+    }
+
+    if (!isJson(watch('jsonText'))) {
+      alert('JsonText is invalid')
+      return
+    }
 
     try {
-      await axios.post('http://localhost:4002/commit', {
+      await axios.post(`http://${config.host}:4002/commit`, {
         data: JSON.parse(watch('jsonText'))
       })
-    }
-    catch ({response}) {
+    } catch ({response}) {
       alert(JSON.stringify(response))
+    }
+  }
+
+  const onKeyDown = ({key, shiftKey, metaKey}) => {
+    if (metaKey && shiftKey && (key === 'l' || key === 'L')) {
+      onFormat()
+    }
+    if (metaKey && key === 'Enter') {
+      onSubmit()
     }
   }
 
@@ -38,12 +53,12 @@ const SerialInput = ({connection}) => {
           Input
           <span style={{color: 'red'}}> {error}</span>
         </Label>
-        <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '85vh'}} innerRef={register({required: true})}/>
+        <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '85vh'}} innerRef={register({required: true})} onKeyDown={onKeyDown}/>
       </FormGroup>
       {connection && <div className="w-100 text-right">
         <Button type="button" color="primary" className="m-1" onClick={onFormat}>Format</Button>
-        { isJson(watch('jsonText')) &&
-          <Button type="submit" color="success" className="m-1">Commit</Button>
+        {isJson(watch('jsonText')) &&
+        <Button type="submit" color="success" className="m-1">Commit</Button>
         }
       </div>}
     </Form>

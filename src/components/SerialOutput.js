@@ -1,9 +1,9 @@
-import React, {Fragment, useEffect, useState, useMemo} from 'react'
-import {Input, Label, Button, FormGroup} from 'reactstrap'
-import syntaxHighlight from '../helpers/syntaxHighlight'
+import React, {Fragment, useEffect, useMemo, useState} from 'react'
+import {Button, FormGroup, Input, Label} from 'reactstrap'
+import config from '../config'
 import socketio from 'socket.io-client'
-const socket = socketio('http://localhost:4002')
 
+const socket = socketio(`http://${config.host}:4002`)
 
 const useSocketIOTopic = (topic) => {
   const [response, setResponse] = useState(undefined)
@@ -19,30 +19,46 @@ const useSocketIOTopic = (topic) => {
 
 const SerialOutput = ({connection}) => {
   const [text, setText] = useState(``)
+  const [autoClear, setAutoClear] = useState(true)
   const res = useSocketIOTopic('listening')
 
   useMemo(() => {
     if (res) {
       const {type, data} = res
       if (type === 'json') {
-        const mergeText = `${text}${JSON.stringify(data, null, 2)}\r\n`
-        setText(mergeText)
-      }
-      else {
-        const mergeText = `${text}${data}\r\n`
-        setText(mergeText)
+        if (autoClear) {
+          return setText(`${JSON.stringify(data, null, 2)}\r\n`)
+        }
+
+        setText(`${text}${JSON.stringify(data, null, 2)}\r\n`)
+      } else {
+        if (autoClear) {
+          return setText(`${data}\r\n`)
+        }
+        setText(`${text}${data}\r\n`)
       }
     }
-  }, [res])
+  }, [res, autoClear])
 
   return (
     <Fragment>
+
       <FormGroup>
-        <Label>Output</Label>
-        <Input type="textarea" disabled={!connection} value={text} style={{height: '85vh', lineHeight: 1.2}}/>
+        <Label>
+          Output
+        </Label>
+        <Input type="textarea" disabled={!connection} value={text} style={{height: '85vh', lineHeight: 1.2}} onKeyDown={({key, metaKey}) => {
+          if (metaKey && key === 'k') {
+            setText(``)
+          }
+        }}/>
       </FormGroup>
       <div className="w-100 text-right">
-        <Button type="button" color="primary" onClick={() => setText(``)}>Clear</Button>
+        <Label check>
+          <Input type="checkbox" checked={autoClear} onChange={({target}) => setAutoClear(target.checked)}/>{' '}
+          Auto-Clear
+        </Label>
+        <Button type="button" color="primary" className="ml-3" onClick={() => setText(``)}>Clear</Button>
       </div>
     </Fragment>
   )

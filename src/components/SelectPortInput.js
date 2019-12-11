@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, {useEffect, useMemo, useState} from 'react'
 import useForm from 'react-hook-form'
 import {Button, Col, Form, FormGroup, Input, Label} from 'reactstrap'
-
+import config from '../config'
 const baudRates = [
   9600,
   19200,
@@ -18,8 +18,8 @@ const SelectPortInput = ({onStatusChange = () => true}) => {
   const [baudRate, setBaudRate] = useState()
   const {register, getValues} = useForm()
   useEffect(() => {
-    axios.get('http://localhost:4002/list').then(({data}) => setPorts(data))
-    axios.get('http://localhost:4002/info').then(({data}) => {
+    axios.get(`http://${config.host}:4002/list`).then(({data}) => setPorts(data))
+    axios.get(`http://${config.host}:4002/info`).then(({data}) => {
       if (data.status === 'connected') {
         const {port: _port, baudRate: _baudRate} = data.data
         setPort(_port)
@@ -55,7 +55,7 @@ const SelectPortInput = ({onStatusChange = () => true}) => {
         {!connected && <Button type="button" color="success" className="form-control" onClick={async () => {
           try {
             const {port, baudRate} = getValues()
-            await axios.post('http://localhost:4002/connect', {port, baudRate})
+            await axios.post(`http://${config.host}:4002/connect`, {port, baudRate})
             setConnected(true)
           } catch ({response}) {
             console.log(response)
@@ -66,7 +66,7 @@ const SelectPortInput = ({onStatusChange = () => true}) => {
         {
           connected && <Button type="button" color="danger" className="form-control" onClick={async () => {
             try {
-              await axios.post('http://localhost:4002/disconnect')
+              await axios.post(`http://${config.host}:4002/disconnect`)
               setConnected(false)
             } catch ({response}) {
               console.log(response)

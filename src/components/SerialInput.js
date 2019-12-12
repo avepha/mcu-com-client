@@ -4,6 +4,7 @@ import useForm from 'react-hook-form'
 import isJson from '../helpers/isJson'
 import axios from 'axios'
 import config from '../config'
+import shortkeyHandler from '../helpers/shortkeyHandler'
 
 const SerialInput = ({connection}) => {
   const {register, watch, setValue} = useForm()
@@ -37,14 +38,8 @@ const SerialInput = ({connection}) => {
     }
   }
 
-  const onKeyDown = ({key, shiftKey, metaKey}) => {
-    if (metaKey && shiftKey && (key === 'l' || key === 'L')) {
-      onFormat()
-    }
-    if (metaKey && key === 'Enter') {
-      onSubmit()
-    }
-  }
+  shortkeyHandler.addEvent('commit', {metaKey: true, shiftKey: true, key: 'Enter'}, () => onSubmit())
+  shortkeyHandler.addEvent('format', {metaKey: true, shiftKey: true, key: 'l'}, () => onFormat())
 
   return (
     <Form onSubmit={onSubmit}>
@@ -53,7 +48,7 @@ const SerialInput = ({connection}) => {
           Input
           <span style={{color: 'red'}}> {error}</span>
         </Label>
-        <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '85vh'}} innerRef={register({required: true})} onKeyDown={onKeyDown}/>
+        <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '85vh'}} innerRef={register({required: true})} />
       </FormGroup>
       {connection && <div className="w-100 text-right">
         <Button type="button" color="primary" className="m-1" onClick={onFormat}>Format</Button>

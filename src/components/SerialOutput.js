@@ -2,6 +2,7 @@ import React, {Fragment, useEffect, useMemo, useState} from 'react'
 import {Button, FormGroup, Input, Label} from 'reactstrap'
 import config from '../config'
 import socketio from 'socket.io-client'
+import shortkeyHandler from '../helpers/shortkeyHandler'
 
 const socket = socketio(`http://${config.host}:4002`)
 
@@ -21,7 +22,9 @@ const SerialOutput = ({connection}) => {
   const [text, setText] = useState(``)
   const [autoClear, setAutoClear] = useState(true)
   const res = useSocketIOTopic('listening')
-
+  useEffect(() => {
+    shortkeyHandler.addEvent('clearText', {metaKey: true, shiftKey: true, key: 'k'}, () => setText(``))
+  }, [])
   useMemo(() => {
     if (res) {
       const {type, data} = res
@@ -48,11 +51,7 @@ const SerialOutput = ({connection}) => {
         <Label>
           Output
         </Label>
-        <Input type="textarea" disabled={!connection} value={text} style={{height: '85vh', lineHeight: 1.2}} onKeyDown={({key, metaKey}) => {
-          if (metaKey && key === 'k') {
-            setText(``)
-          }
-        }}/>
+        <Input type="textarea" disabled={!connection} value={text} style={{height: '85vh', lineHeight: 1.2}}/>
       </FormGroup>
       <div className="w-100 text-right">
         <Label check>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Button, Form, FormGroup, Input, Label} from 'reactstrap'
 import useForm from 'react-hook-form'
 import isJson from '../helpers/isJson'
@@ -6,9 +6,17 @@ import axios from 'axios'
 import config from '../config'
 import shortkeyHandler from '../helpers/shortkeyHandler'
 
-const SerialInput = ({connection}) => {
+const SerialInput = ({connection, preset}) => {
   const {register, watch, setValue} = useForm()
   const [error, setError] = useState(undefined)
+
+  useEffect(() => {
+    if (preset) {
+      const {data} = preset
+      setValue('jsonText', JSON.stringify(data, null, 2))
+    }
+  }, [preset])
+
   const onFormat = () => {
     setError(undefined)
     const str = watch('jsonText')

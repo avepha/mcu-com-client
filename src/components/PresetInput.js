@@ -10,7 +10,7 @@ import EditPresetModal from './EditPresetModal'
 
 const PresetInput = ({setSerialInputText, presets, fetchPreset}) => {
   const [modal, setModal] = useState(false)
-  const [editModal, setEditModal] = useState(true)
+  const [editModal, setEditModal] = useState(false)
   useEffect(() => {
     fetchPreset()
     // eslint-disable-next-line

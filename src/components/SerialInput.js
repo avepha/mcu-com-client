@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
+import {connect} from 'react-redux'
 import {Button, Form, FormGroup, Input, Label} from 'reactstrap'
 import useForm from 'react-hook-form'
 import isJson from '../helpers/isJson'
@@ -6,16 +7,16 @@ import axios from 'axios'
 import config from '../config'
 import shortkeyHandler from '../helpers/shortkeyHandler'
 
-const SerialInput = ({connection, preset}) => {
+import {addRecent} from '../redux/actions'
+
+const SerialInput = ({connection, addRecent, serialInputText}) => {
   const {register, watch, setValue} = useForm()
   const [error, setError] = useState(undefined)
 
   useEffect(() => {
-    if (preset) {
-      const {data} = preset
-      setValue('jsonText', JSON.stringify(data, null, 2))
-    }
-  }, [preset])
+    setValue('jsonText', JSON.stringify(serialInputText, null, 2))
+    // eslint-disable-next-line
+  }, [serialInputText])
 
   const onFormat = () => {
     setError(undefined)
@@ -42,17 +43,9 @@ const SerialInput = ({connection, preset}) => {
         data: JSON.parse(watch('jsonText'))
       })
 
-      const recentSubmits = JSON.parse(localStorage.getItem('recent')) || []
-      console.log(recentSubmits)
-      const header = JSON.stringify(JSON.parse(watch('jsonText'))).slice(0, 50)
       const data = JSON.stringify(JSON.parse(watch('jsonText')))
+      addRecent({data})
 
-      recentSubmits.push({header, data})
-      if (recentSubmits.length > 50) {
-        recentSubmits.shift()
-      }
-
-      localStorage.setItem('recent', JSON.stringify(recentSubmits))
     } catch ({response}) {
       alert(JSON.stringify(response))
     }
@@ -68,7 +61,7 @@ const SerialInput = ({connection, preset}) => {
           Input
           <span style={{color: 'red'}}> {error}</span>
         </Label>
-        <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '85vh'}} innerRef={register({required: true})} />
+        <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '85vh'}} innerRef={register({required: true})}/>
       </FormGroup>
       {connection && <div className="w-100 text-right">
         <Button type="button" color="primary" className="m-1" onClick={onFormat}>Format</Button>
@@ -79,4 +72,12 @@ const SerialInput = ({connection, preset}) => {
     </Form>
   )
 }
-export default SerialInput
+
+
+const mapStateToProps = ({input}) => {
+  const {serialInputText} = input
+  return {
+    serialInputText
+  }
+}
+export default connect(mapStateToProps, {addRecent})(SerialInput)

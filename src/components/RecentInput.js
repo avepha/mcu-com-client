@@ -1,40 +1,27 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import {Button, Col, FormGroup, Input, Label} from 'reactstrap'
-
-
-const RecentInput = ({onSelect}) => {
-  const [recent, setRecent] = useState([])
-
-  const updateLocalStorage = () => {
-    setRecent(JSON.parse(localStorage.getItem('recent')) || [])
-  }
-
-  const clearLocalStorage = () => {
-    localStorage.removeItem('recent');
-    updateLocalStorage()
-  }
-
-  useEffect(() => {
-    updateLocalStorage()
-    // eslint-disable-next-line
-  }, [])
-
+import {connect} from 'react-redux'
+import {delRecentAll, setSerialInputText} from '../redux/actions'
+const RecentInput = ({recentList, delRecentAll, setSerialInputText}) => {
   return (
     <FormGroup row>
       <Label xs={1}>Recent: </Label>
       <Col xs={7}>
-        <Input type="select" onChange={({target}) => target.value !== -1 && onSelect({
-          header: recent[target.value].header,
-          data: JSON.parse(recent[target.value].data)
-        })}>
-          {recent.map(({header, data}, index) => <option key={index} value={index}>{header}</option>)}
+        <Input type="select" onChange={({target}) => target.value !== -1 && setSerialInputText({inputText: JSON.parse(recentList[target.value])})}>
+          {recentList.map((recent, index) => <option key={index} value={index}>{recent.slice(0, 100)}</option>)}
         </Input>
       </Col>
       <Col xs={2}>
-        <Button type="button" color="danger" className="form-control" onClick={clearLocalStorage}>Clear</Button>
+        <Button type="button" color="danger" className="form-control" onClick={delRecentAll}>Clear</Button>
       </Col>
     </FormGroup>
   )
 }
 
-export default RecentInput
+const mapStateToProps = ({recent}) => {
+  const {recentList} = recent
+  return {
+    recentList
+  }
+}
+export default connect(mapStateToProps, {delRecentAll, setSerialInputText})(RecentInput)

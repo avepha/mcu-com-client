@@ -1,0 +1,4 @@
+export const ADD_RECENT = 'ADD_RECENT'
+export const DEL_RECENT = 'DEL_RECENT'
+
+export const SET_SERIAL_INPUT_TEXT = 'SET_SERIAL_INPUT_TEXT'

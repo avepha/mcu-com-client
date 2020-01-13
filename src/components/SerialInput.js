@@ -41,6 +41,18 @@ const SerialInput = ({connection, preset}) => {
       await axios.post(`http://${config.host}:4002/commit`, {
         data: JSON.parse(watch('jsonText'))
       })
+
+      const recentSubmits = JSON.parse(localStorage.getItem('recent')) || []
+      console.log(recentSubmits)
+      const header = JSON.stringify(JSON.parse(watch('jsonText'))).slice(0, 50)
+      const data = JSON.stringify(JSON.parse(watch('jsonText')))
+
+      recentSubmits.push({header, data})
+      if (recentSubmits.length > 50) {
+        recentSubmits.shift()
+      }
+
+      localStorage.setItem('recent', JSON.stringify(recentSubmits))
     } catch ({response}) {
       alert(JSON.stringify(response))
     }

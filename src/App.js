@@ -4,6 +4,8 @@ import SelectPortInput from './components/SelectPortInput'
 import SerialInput from './components/SerialInput'
 import SerialOutput from './components/SerialOutput'
 import PresetInput from './components/PresetInput'
+import RecentInput from './components/RecentInput'
+
 import './helpers/shortkeyHandler'
 import pkg from '../package.json'
 
@@ -17,6 +19,11 @@ function App() {
         <Row>
           <Col xs="12">
             {isPortOpen && <PresetInput onSelect={(preset) => setPreset(preset)}/>}
+          </Col>
+        </Row>
+        <Row>
+          <Col xs="12">
+            {isPortOpen && <RecentInput onSelect={(preset) => setPreset(preset)}/>}
           </Col>
         </Row>
         <Row>

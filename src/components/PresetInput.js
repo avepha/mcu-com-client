@@ -3,24 +3,16 @@ import React, {useEffect, useState} from 'react'
 import {Button, Col, FormGroup, Input, Label} from 'reactstrap'
 import config from '../config'
 
-const PRESETS = [
-  {
-    header: 'info',
-    data: {
-      topic: 'info',
-      method: 'query',
-      reqId: 'req-1',
-    }
-  }
-]
 
 const PresetInput = ({onSelect}) => {
-  const [presets, setPreset] = useState(PRESETS)
+  const [presets, setPreset] = useState([])
 
   useEffect(() => {
     axios.get(`http://${config.host}:4002/saves`).then(({data}) => {
       const nPresets = data.map(({header, data}) => ({header, data}))
       setPreset([...presets, ...nPresets])
+
+      if (nPresets.length > 0) onSelect(nPresets[0])
     })
     // eslint-disable-next-line
   }, [])
@@ -29,7 +21,7 @@ const PresetInput = ({onSelect}) => {
     <FormGroup row>
       <Label xs={1}>Preset: </Label>
       <Col xs={7}>
-        <Input type="select" onChange={({target}) => onSelect(presets[target.value])}>
+        <Input type="select" onChange={({target}) => target.value !== -1 && onSelect(presets[target.value])}>
           {presets.map(({header, data}, index) => <option key={index} value={index}>{header}</option>)}
         </Input>
       </Col>

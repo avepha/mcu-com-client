@@ -20,7 +20,7 @@ const useSocketIOTopic = (topic) => {
 
 const SerialOutput = ({connection}) => {
   const [text, setText] = useState(``)
-  const [autoClear, setAutoClear] = useState(true)
+  const [autoClear, setAutoClear] = useState(false)
   const res = useSocketIOTopic('listening')
   useEffect(() => {
     shortkeyHandler.addEvent('clearText', {metaKey: true, shiftKey: true, key: 'k'}, () => setText(``))

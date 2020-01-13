@@ -11,24 +11,24 @@ import pkg from '../package.json'
 
 function App() {
   const [isPortOpen, setIsPortOpen] = useState(false)
-  const [preset, setPreset] = useState()
+
   return (
     <Fragment>
-      <div className="ml-3 mr-3" >
+      <div className="ml-3 mr-3">
         <SelectPortInput onStatusChange={(status) => setIsPortOpen(status)}/>
         <Row>
           <Col xs="12">
-            {isPortOpen && <PresetInput onSelect={(preset) => setPreset(preset)}/>}
+            {isPortOpen && <PresetInput />}
           </Col>
         </Row>
         <Row>
           <Col xs="12">
-            {isPortOpen && <RecentInput onSelect={(preset) => setPreset(preset)}/>}
+            {isPortOpen && <RecentInput />}
           </Col>
         </Row>
         <Row>
           <Col xs="6">
-            <SerialInput connection={isPortOpen} preset={preset}/>
+            <SerialInput connection={isPortOpen}/>
           </Col>
           <Col xs="6">
             <SerialOutput connection={isPortOpen}/>

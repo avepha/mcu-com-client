@@ -1,4 +1,4 @@
-import {ADD_RECENT, DEL_RECENT} from '../actionTypes'
+import {ADD_RECENT, DELETE_RECENT} from '../actionTypes'
 
 export const addRecent = ({data}) => ({
   type: ADD_RECENT,
@@ -6,6 +6,6 @@ export const addRecent = ({data}) => ({
 })
 
 export const delRecentAll = () => ({
-  type: DEL_RECENT,
+  type: DELETE_RECENT,
   payload: {}
 })

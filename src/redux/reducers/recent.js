@@ -1,4 +1,4 @@
-import { ADD_RECENT, DEL_RECENT } from "../actionTypes";
+import { ADD_RECENT, DELETE_RECENT } from "../actionTypes";
 
 const initialState = {
   recentList: JSON.parse(localStorage.getItem('recent')) || []
@@ -15,7 +15,7 @@ export default function(state = initialState, action) {
         recentList: newRecentList
       };
     }
-    case DEL_RECENT: {
+    case DELETE_RECENT: {
       localStorage.removeItem('recent')
       return {
         ...state,

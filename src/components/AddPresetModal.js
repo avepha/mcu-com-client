@@ -1,11 +1,11 @@
 import React from 'react'
 import useForm from 'react-hook-form'
-import axios from 'axios'
-import config from '../config'
+import {connect} from 'react-redux'
+import {addPreset} from '../redux/actions'
 import {Button, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap'
 import isJson from '../helpers/isJson'
 
-const AddPresetModal = ({open = false, close = () => null}) => {
+const AddPresetModal = ({open = false, close = () => null, addPreset}) => {
   const {register, getValues, triggerValidation, errors, watch, setValue} = useForm()
   return (
     <Modal isOpen={open} toggle={close} size="lg">
@@ -26,7 +26,7 @@ const AddPresetModal = ({open = false, close = () => null}) => {
         })}/>
 
         <div className="w-100 text-right m-2">
-          { isJson(watch('presetData')) && <Button type="button" color="primary" size="lg" onClick={() => {
+          {isJson(watch('presetData')) && <Button type="button" color="primary" size="lg" onClick={() => {
             const presetText = watch('presetData')
             setValue('presetData', JSON.stringify(JSON.parse(presetText), null, 2))
           }}>Format</Button>}
@@ -38,14 +38,10 @@ const AddPresetModal = ({open = false, close = () => null}) => {
           <Button className="ml-2" type="button" color="success" size="lg" onClick={async () => {
             const isValid = await triggerValidation()
             if (!isValid) {
-              return null;
+              return null
             }
-            const {title, presetData} = getValues();
-            await axios.post(`http://${config.host}:4002/saves`, {
-              header: title,
-              data: JSON.parse(presetData)
-            }).catch(err => console.log(err))
-
+            const {title, presetData} = getValues()
+            addPreset({header: title, data: JSON.parse(presetData)})
             close()
           }}>Add Preset</Button>
         </div>
@@ -54,4 +50,4 @@ const AddPresetModal = ({open = false, close = () => null}) => {
   )
 }
 
-export default AddPresetModal
+export default connect(null, {addPreset})(AddPresetModal)

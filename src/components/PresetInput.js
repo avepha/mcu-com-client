@@ -1,24 +1,18 @@
-import axios from 'axios'
 import React, {useEffect, useState} from 'react'
 import {connect} from 'react-redux'
 import {setSerialInputText} from '../redux/actions'
 import {Button, Col, FormGroup, Input, Label} from 'reactstrap'
-import config from '../config'
+
+import {fetchPreset} from '../redux/actions'
 
 import AddPresetModal from './AddPresetModal'
 import EditPresetModal from './EditPresetModal'
 
-const PresetInput = ({setSerialInputText}) => {
-  const [presets, setPreset] = useState([])
+const PresetInput = ({setSerialInputText, presets, fetchPreset}) => {
   const [modal, setModal] = useState(false)
   const [editModal, setEditModal] = useState(true)
   useEffect(() => {
-    axios.get(`http://${config.host}:4002/saves`).then(({data}) => {
-      const nPresets = data.map(({header, data}) => ({header, data}))
-      setPreset([...presets, ...nPresets])
-
-      if (nPresets.length > 0) setSerialInputText({inputText: nPresets[0].data})
-    })
+    fetchPreset()
     // eslint-disable-next-line
   }, [])
 
@@ -42,4 +36,8 @@ const PresetInput = ({setSerialInputText}) => {
   )
 }
 
-export default connect(null, {setSerialInputText})(PresetInput)
+const mapStateToProps = ({preset}) => {
+  const {presets} = preset
+  return {presets}
+}
+export default connect(mapStateToProps, {setSerialInputText, fetchPreset})(PresetInput)

@@ -1,15 +1,11 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
+import {connect} from 'react-redux'
+import {fetchPreset, deletePreset} from '../redux/actions'
 import {Button, Modal, ModalBody, ModalHeader, Table} from 'reactstrap'
-import axios from 'axios'
-import config from '../config'
 
-const EditPresetModal = ({open = false, close = () => null}) => {
-  const [presets, setPreset] = useState([])
+const EditPresetModal = ({open = false, close = () => null, presets, fetchPreset, deletePreset}) => {
   useEffect(() => {
-    axios.get(`http://${config.host}:4002/saves`).then(({data}) => {
-      const nPresets = data.map(({id, header, data}) => ({id, header, data}))
-      setPreset(nPresets)
-    })
+    fetchPreset()
     // eslint-disable-next-line
   }, [])
 
@@ -36,7 +32,7 @@ const EditPresetModal = ({open = false, close = () => null}) => {
                 <td>{header}</td>
                 <td>{JSON.stringify(data).slice(0, 50)}</td>
                 <td>
-                  <Button type="button" color="danger" size="sm" style={{width: 60}}>Delete</Button>
+                  <Button type="button" color="danger" size="sm" style={{width: 60}} onClick={() => deletePreset(id)}>Delete</Button>
                   <Button type="button" color="primary" size="sm" style={{width: 60}} className="ml-1">Edit</Button>
                 </td>
               </tr>
@@ -49,4 +45,6 @@ const EditPresetModal = ({open = false, close = () => null}) => {
   )
 }
 
-export default EditPresetModal
+export default connect(({preset}) => ({
+  presets: preset.presets
+}), {fetchPreset, deletePreset})(EditPresetModal)

@@ -1,3 +1,4 @@
+import {sortBy} from 'lodash'
 import {DELETE_PRESET, SET_PRESET} from '../actionTypes'
 import axios from 'axios'
 import config from '../../config'
@@ -28,6 +29,6 @@ export const fetchPreset = () => async (dispatch) => {
 
   dispatch({
     type: SET_PRESET,
-    payload: results,
+    payload: sortBy(results, 'header'),
   })
 }

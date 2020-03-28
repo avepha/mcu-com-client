@@ -1,5 +1,5 @@
-import React, {Fragment, useEffect, useMemo, useState} from 'react'
-import {FormGroup, Input} from 'reactstrap'
+import React, {useEffect, useMemo, useState} from 'react'
+import {Col, FormGroup, Input, Row} from 'reactstrap'
 import config from '../config'
 import socketio from 'socket.io-client'
 import shortkeyHandler from '../helpers/shortkeyHandler'
@@ -20,6 +20,8 @@ const useSocketIOTopic = (topic) => {
 
 const SerialOutput = ({connection}) => {
   const [text, setText] = useState(``)
+  const [level, setLevel] = useState('all')
+  const [topic, setTopic] = useState('')
   const [autoClear] = useState(false)
   const res = useSocketIOTopic('log')
   useEffect(() => {
@@ -27,30 +29,50 @@ const SerialOutput = ({connection}) => {
   }, [])
   useMemo(() => {
     if (res) {
-      const {type, data} = res
-      if (type === 'json') {
-        if (autoClear) {
-          return setText(`${JSON.stringify(data, null, 2)}\r\n`)
-        }
+      const {data, meta} = res
+      if (level !== 'all' && meta.level !== level)
+        return setText('')
 
-        setText(`${text}${JSON.stringify(data, null, 2)}\r\n`)
+      if (topic !== '' && meta.topic !== topic)
+        return setText('')
+
+      if (autoClear) {
+        return setText(`${data}\r\n`)
       }
-      else {
-        if (autoClear) {
-          return setText(`${data}\r\n`)
-        }
-        setText(`${text}${data}\r\n`)
-      }
+      setText(`${text}${data}\r\n`)
     }
     // eslint-disable-next-line
   }, [res, autoClear])
 
   return (
-    <Fragment>
-      <FormGroup className="m-0 p-0">
-        <Input type="textarea" disabled={!connection} value={text} style={{height: '40vh', lineHeight: 1.2}}/>
-      </FormGroup>
-    </Fragment>
+    <FormGroup className="m-0 p-0">
+      <Row form>
+        <Col md={3} className="m-0 p-0 ml-1">
+          <Input type="select"
+                 className="form-control" value={level}
+                 onChange={({target}) => {
+                   setLevel(target.value)
+                   setText('')
+                 }}
+          >
+            <option value="all">All</option>
+            <option value="fatal">Fatal</option>
+            <option value="error">Error</option>
+            <option value="warning">Warning</option>
+            <option value="info">Info</option>
+            <option value="debug">Debug</option>
+            <option value="trace">Trace</option>
+          </Input>
+        </Col>
+        <Col md={8} className="m-0 p-0">
+          <Input type="text" className="form-control" value={topic} onChange={({target}) => {
+            setText('')
+            setTopic(target.value)
+          }}/>
+        </Col>
+      </Row>
+      <Input type="textarea" disabled={!connection} value={text} style={{height: '40vh', lineHeight: 1.2}}/>
+    </FormGroup>
   )
 }
 

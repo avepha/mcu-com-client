@@ -68,7 +68,7 @@ const SerialInput = ({connection, addRecent, serialInputText}) => {
             {isJson(watch('jsonText')) && <Button type="submit" color="success" className="mb-1 btn-sm">Commit</Button>}
           </div>
         </div>
-        <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '85vh'}} innerRef={register({required: true})}/>
+        <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '90vh'}} innerRef={register({required: true})}/>
       </FormGroup>
     </Form>
   )

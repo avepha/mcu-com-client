@@ -5,8 +5,8 @@ import {Button, Col, Form, FormGroup, Input, Label} from 'reactstrap'
 import config from '../config'
 import shortkeyHandler from '../helpers/shortkeyHandler'
 const baudRates = [
-  345600,
   115200,
+  345600,
   56700,
   19200,
   9600,
@@ -61,7 +61,9 @@ const SelectPortInput = ({onStatusChange = () => true}) => {
 
   return <Form className="mt-2">
     <FormGroup row>
-      <Label sm={1}>Port</Label>
+      <Label sm={1}>
+        <span className="font-weight-bolder">Port: </span>
+      </Label>
       <Col sm={7}>
         <Input type="select" name="port" value={port} innerRef={register({required: true})}>
           <option value={'/dev/ROBOT'} key={'robot'}>/dev/ROBOT</option>

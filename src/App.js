@@ -5,6 +5,7 @@ import SerialInput from './components/SerialInput'
 import SerialOutput from './components/SerialOutput'
 import PresetInput from './components/PresetInput'
 import RecentInput from './components/RecentInput'
+import LogOutput from './components/LogOutput'
 
 import './helpers/shortkeyHandler'
 import pkg from '../package.json'
@@ -15,23 +16,28 @@ function App() {
   return (
     <Fragment>
       <div className="ml-3 mr-3">
-        <SelectPortInput onStatusChange={(status) => setIsPortOpen(status)}/>
         <Row>
-          <Col xs="12">
+          <Col xs="6">
+            <SelectPortInput onStatusChange={(status) => setIsPortOpen(status)}/>
+          </Col>
+          <Col xs="6">
             {isPortOpen && <PresetInput />}
           </Col>
         </Row>
         <Row>
-          <Col xs="12">
+
+          <Col xs="6">
             {isPortOpen && <RecentInput />}
           </Col>
         </Row>
+
         <Row>
-          <Col xs="6">
+          <Col xs="5" style={{padding: 1}}>
             <SerialInput connection={isPortOpen}/>
           </Col>
-          <Col xs="6">
+          <Col xs="7" style={{padding: 1}}>
             <SerialOutput connection={isPortOpen}/>
+            <LogOutput connection={isPortOpen}/>
           </Col>
         </Row>
       </div>

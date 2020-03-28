@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useMemo, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {Button, FormGroup, Input, Label} from 'reactstrap'
 import config from '../config'
 import socketio from 'socket.io-client'
@@ -45,22 +45,21 @@ const SerialOutput = ({connection}) => {
   }, [res, autoClear])
 
   return (
-    <Fragment>
-
-      <FormGroup>
-        <Label>
-          Output
-        </Label>
-        <Input type="textarea" disabled={!connection} value={text} style={{height: '85vh', lineHeight: 1.2}}/>
-      </FormGroup>
-      <div className="w-100 text-right">
-        <Label check>
-          <Input type="checkbox" checked={autoClear} onChange={({target}) => setAutoClear(target.checked)}/>{' '}
-          Auto-Clear
-        </Label>
-        <Button type="button" color="primary" className="ml-3" onClick={() => setText(``)}>Clear</Button>
+    <FormGroup className="m-0 p-0">
+      <div className="row justify-content-lg-between pb-1">
+        <div className="ml-3">
+          <span className="font-weight-bolder">Output</span>
+        </div>
+        <div className="mr-4">
+          <Label check>
+            <Input type="checkbox" checked={autoClear} onChange={({target}) => setAutoClear(target.checked)}/>{' '}
+            Auto-Clear
+          </Label>
+          <Button type="button" color="primary" className="ml-3 btn-sm" onClick={() => setText(``)}>Clear</Button>
+        </div>
       </div>
-    </Fragment>
+      <Input type="textarea" disabled={!connection} value={text} style={{height: '45vh', lineHeight: 1.2}}/>
+    </FormGroup>
   )
 }
 

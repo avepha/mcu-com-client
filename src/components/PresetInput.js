@@ -17,10 +17,12 @@ const PresetInput = ({setSerialInputText, presets, fetchPreset}) => {
   }, [])
 
   return (
-    <FormGroup row>
+    <FormGroup row className="mt-2">
       <AddPresetModal close={() => setModal(false)} open={modal} />
       <EditPresetModal close={() => setEditModal(false)} open={editModal} />
-      <Label xs={1}>Preset: </Label>
+      <Label xs={1}>
+        <span className="font-weight-bolder">Preset: </span>
+      </Label>
       <Col xs={7}>
         <Input type="select" onChange={({target}) => target.value !== -1 && setSerialInputText({inputText: presets[target.value].data})}>
           {presets.map(({header, data}, index) => <option key={index} value={index}>{header}</option>)}

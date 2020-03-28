@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {connect} from 'react-redux'
-import {Button, Form, FormGroup, Input, Label} from 'reactstrap'
+import {Button, Form, FormGroup, Input} from 'reactstrap'
 import useForm from 'react-hook-form'
 import isJson from '../helpers/isJson'
 import axios from 'axios'
@@ -23,7 +23,8 @@ const SerialInput = ({connection, addRecent, serialInputText}) => {
     const str = watch('jsonText')
     if (isJson(str)) {
       setValue('jsonText', JSON.stringify(JSON.parse(str), null, 2))
-    } else {
+    }
+    else {
       setError('Json format is invalid')
     }
   }
@@ -57,18 +58,18 @@ const SerialInput = ({connection, addRecent, serialInputText}) => {
   return (
     <Form onSubmit={onSubmit}>
       <FormGroup>
-        <Label>
-          Input
-          <span style={{color: 'red'}}> {error}</span>
-        </Label>
+        <div className="row justify-content-lg-between pb-0">
+          <div className="ml-3">
+            <span className="font-weight-bolder">Input</span>
+            <span style={{color: 'red'}}> {error}</span>
+          </div>
+          <div className="mr-4">
+            <Button type="button" color="primary" className="mb-1 btn-sm" onClick={onFormat}>Format</Button>
+            {isJson(watch('jsonText')) && <Button type="submit" color="success" className="mb-1 btn-sm">Commit</Button>}
+          </div>
+        </div>
         <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '85vh'}} innerRef={register({required: true})}/>
       </FormGroup>
-      {connection && <div className="w-100 text-right">
-        <Button type="button" color="primary" className="m-1" onClick={onFormat}>Format</Button>
-        {isJson(watch('jsonText')) &&
-        <Button type="submit" color="success" className="m-1">Commit</Button>
-        }
-      </div>}
     </Form>
   )
 }

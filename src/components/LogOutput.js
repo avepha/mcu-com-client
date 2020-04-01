@@ -31,10 +31,10 @@ const SerialOutput = ({connection}) => {
     if (res) {
       const {data, meta} = res
       if (level !== 'all' && meta.level !== level)
-        return setText('')
+        return
 
       if (topic !== '' && meta.topic !== topic)
-        return setText('')
+        return
 
       if (autoClear) {
         return setText(`${data}\r\n`)

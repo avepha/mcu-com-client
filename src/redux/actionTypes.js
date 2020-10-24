@@ -7,3 +7,5 @@ export const ADD_PRESET = 'ADD_PRESET'
 export const DELETE_PRESET = 'DELETE_PRESET'
 export const EDIT_PRESET = 'EDIT_PRESET'
 export const SET_PRESET = 'FETCH_PRESET'
+
+export const SET_CONNECTION = 'SET_CONNECTION'

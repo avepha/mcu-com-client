@@ -1,20 +1,22 @@
 import axios from 'axios'
-import React, {useEffect, useMemo, useState} from 'react'
-import useForm from 'react-hook-form'
+import {connect} from 'react-redux'
 import {Button, Col, Form, FormGroup, Input, Label} from 'reactstrap'
+import React, {useEffect, useState} from 'react'
+import useForm from 'react-hook-form'
 import config from '../config'
 import shortkeyHandler from '../helpers/shortkeyHandler'
+import {setConnection} from '../redux/actions'
+
 const baudRates = [
-  115200,
   345600,
+  115200,
   56700,
   19200,
   9600,
 ]
 
-const SelectPortInput = ({onStatusChange = () => true}) => {
+const SelectPortInput = ({connection, setConnection}) => {
   const [ports, setPorts] = useState([])
-  const [connected, setConnected] = useState(false)
   const [port, setPort] = useState()
   const [baudRate, setBaudRate] = useState()
   const {register, getValues} = useForm()
@@ -23,7 +25,7 @@ const SelectPortInput = ({onStatusChange = () => true}) => {
     try {
       const {port, baudRate} = getValues()
       await axios.post(`http://${config.host}:4002/connect`, {port, baudRate})
-      setConnected(true)
+      setConnection(true)
     } catch ({response}) {
       alert(JSON.stringify(response.data))
     }
@@ -32,7 +34,7 @@ const SelectPortInput = ({onStatusChange = () => true}) => {
   const onDisconnect = async () => {
     try {
       await axios.post(`http://${config.host}:4002/disconnect`)
-      setConnected(false)
+      setConnection(false)
     } catch ({response}) {
       alert(JSON.stringify(response.data))
     }
@@ -45,8 +47,9 @@ const SelectPortInput = ({onStatusChange = () => true}) => {
         const {port: _port, baudRate: _baudRate} = data.data
         setPort(_port)
         setBaudRate(_baudRate)
-        setConnected(true)
-      } else setConnected(false)
+        setConnection(true)
+      }
+      else setConnection(false)
     }).catch(e => console.log({e}))
 
     shortkeyHandler.addEvent('connect', {metaKey: true, shiftKey: true, key: 's'}, () => onConnect())
@@ -54,12 +57,7 @@ const SelectPortInput = ({onStatusChange = () => true}) => {
     // eslint-disable-next-line
   }, [])
 
-
-  useMemo(() => {
-    onStatusChange(connected)
-  }, [connected, onStatusChange])
-
-  return <Form className="mt-2">
+  return <Form>
     <FormGroup row>
       <Label sm={1}>
         <span className="font-weight-bolder">Port: </span>
@@ -78,11 +76,20 @@ const SelectPortInput = ({onStatusChange = () => true}) => {
         </Input>
       </Col>
       <Col sm={2}>
-        {!connected && <Button type="button" color="success" className="form-control" onClick={onConnect}>Connect</Button>}
-        {connected && <Button type="button" color="danger" className="form-control" onClick={onDisconnect}>Disconnected</Button>}
+        {
+          connection
+            ? <Button type="button" color="danger" className="form-control" onClick={onDisconnect}>Close</Button>
+            : <Button type="button" color="success" className="form-control" onClick={onConnect}>Connect</Button>
+        }
       </Col>
     </FormGroup>
   </Form>
 }
 
-export default SelectPortInput
+const mapStateToProps = ({connection}) => {
+  return {
+    connection: connection.connection
+  }
+}
+
+export default connect(mapStateToProps, {setConnection})(SelectPortInput)

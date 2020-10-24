@@ -8,15 +8,17 @@ import config from '../config'
 import shortkeyHandler from '../helpers/shortkeyHandler'
 
 import {addRecent} from '../redux/actions'
+import PresetInput from './PresetInput'
 
-const SerialInput = ({connection, addRecent, serialInputText}) => {
+const SerialInput = ({connection, addRecent}) => {
+  const [inputText, setInputText] = useState()
   const {register, watch, setValue} = useForm()
   const [error, setError] = useState(undefined)
 
   useEffect(() => {
-    setValue('jsonText', JSON.stringify(serialInputText, null, 2))
+    setValue('jsonText', JSON.stringify(inputText, null, 2))
     // eslint-disable-next-line
-  }, [serialInputText])
+  }, [inputText])
 
   const onFormat = () => {
     setError(undefined)
@@ -58,27 +60,34 @@ const SerialInput = ({connection, addRecent, serialInputText}) => {
   return (
     <Form onSubmit={onSubmit}>
       <FormGroup>
-        <div className="row justify-content-lg-between pb-0">
-          <div className="ml-3">
-            <span className="font-weight-bolder">Input</span>
+        <div className="textarea-container">
+          <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '30vh'}} innerRef={register({required: true})}/>
+          <div className="textarea-container corner-button">
             <span style={{color: 'red'}}> {error}</span>
-          </div>
-          <div className="mr-4">
+
+            {
+              connection && <PresetInput onChange={({inputText}) => setInputText(inputText)}/>
+            }
+
             <Button type="button" color="primary" className="mb-1 btn-sm" onClick={onFormat}>Format</Button>
-            {isJson(watch('jsonText')) && <Button type="submit" color="success" className="mb-1 btn-sm">Commit</Button>}
+
+            {
+              isJson(watch('jsonText')) && <Button type="submit" color="success" className="mb-1 btn-sm">Commit</Button>
+            }
+
           </div>
         </div>
-        <Input type="textarea" name="jsonText" disabled={!connection} style={{height: '90vh'}} innerRef={register({required: true})}/>
       </FormGroup>
     </Form>
   )
 }
 
-
-const mapStateToProps = ({input}) => {
+const mapStateToProps = ({input, connection}) => {
   const {serialInputText} = input
   return {
-    serialInputText
+    serialInputText,
+    connection: connection.connection
   }
 }
+
 export default connect(mapStateToProps, {addRecent})(SerialInput)

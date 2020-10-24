@@ -1,40 +1,17 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
+import {Input} from 'reactstrap'
 import {connect} from 'react-redux'
-import {setSerialInputText} from '../redux/actions'
-import {Button, Col, FormGroup, Input, Label} from 'reactstrap'
+import {fetchPreset, setSerialInputText} from '../redux/actions'
 
-import {fetchPreset} from '../redux/actions'
-
-import AddPresetModal from './AddPresetModal'
-import EditPresetModal from './EditPresetModal'
-
-const PresetInput = ({setSerialInputText, presets, fetchPreset}) => {
-  const [modal, setModal] = useState(false)
-  const [editModal, setEditModal] = useState(false)
+const PresetInput = ({presets, fetchPreset, onChange = () => null}) => {
   useEffect(() => {
     fetchPreset()
-    // eslint-disable-next-line
   }, [])
 
   return (
-    <FormGroup row className="mt-2">
-      <AddPresetModal close={() => setModal(false)} open={modal} />
-      <EditPresetModal close={() => setEditModal(false)} open={editModal} />
-      <Label xs={1}>
-        <span className="font-weight-bolder">Preset: </span>
-      </Label>
-      <Col xs={7}>
-        <Input type="select" onChange={({target}) => target.value !== -1 && setSerialInputText({inputText: presets[target.value].data})}>
-          {presets.map(({header, data}, index) => <option key={index} value={index}>{header}</option>)}
-        </Input>
-      </Col>
-      <Col xs={2}>
-        <Button type="button" color="primary" className="form-control" onClick={() => setEditModal(true)}>Edit</Button>
-      </Col>
-      <Col xs={2}>
-        <Button type="button" color="success" className="form-control" onClick={() => setModal(true)}>+ Add</Button>
-      </Col>
-    </FormGroup>
+    <Input type="select" style={{width: '20ch'}} onChange={({target}) => target.value !== -1 && onChange({inputText: presets[target.value].data})}>
+      {presets.map(({header, data}, index) => <option key={index} value={index}>{header}</option>)}
+    </Input>
   )
 }
 
@@ -42,4 +19,5 @@ const mapStateToProps = ({preset}) => {
   const {presets} = preset
   return {presets}
 }
+
 export default connect(mapStateToProps, {setSerialInputText, fetchPreset})(PresetInput)

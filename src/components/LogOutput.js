@@ -45,9 +45,11 @@ const SerialOutput = ({connection}) => {
   }, [res, autoClear])
 
   return (
-    <FormGroup className="m-0 p-0">
-      <Row form>
-        <Col md={3} className="m-0 p-0 ml-1">
+
+    <div className="w-100">
+      <div className="textarea-container">
+        <Input type="textarea" disabled={!connection} value={text} style={{height: '45vh', lineHeight: 1.2}}/>
+        <div className="corner-button">
           <Input type="select"
                  className="form-control" value={level}
                  onChange={({target}) => {
@@ -63,16 +65,15 @@ const SerialOutput = ({connection}) => {
             <option value="debug">Debug</option>
             <option value="trace">Trace</option>
           </Input>
-        </Col>
-        <Col md={8} className="m-0 p-0">
           <Input type="text" className="form-control" value={topic} onChange={({target}) => {
             setText('')
             setTopic(target.value)
           }}/>
-        </Col>
-      </Row>
-      <Input type="textarea" disabled={!connection} value={text} style={{height: '40vh', lineHeight: 1.2}}/>
-    </FormGroup>
+        </div>
+      </div>
+
+    </div>
+
   )
 }
 
